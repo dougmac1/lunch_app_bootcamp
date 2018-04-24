@@ -3,10 +3,13 @@ package controllers
 import com.google.inject.Inject
 import play.api.mvc.{Action, Controller}
 import services.SandwichService
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-class SandwichController @Inject()(sandwichService: SandwichService) extends Controller{
-  def sandwiches() = Action {
+class SandwichController @Inject()(sandwichService: SandwichService) extends Controller {
+  def sandwiches() = Action.async {
     val sandwiches = sandwichService.sandwiches()
-    Ok(views.html.sandwiches(sandwiches))
+    sandwiches.map { listOfSarnies =>
+      Ok(views.html.sandwiches(listOfSarnies))
+    }
   }
 }
